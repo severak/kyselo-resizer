@@ -19,3 +19,8 @@ route('', '/', function (){
     return render('home');
 });
 
+route('POST', '/upload/', function (){
+    dump($_FILES);
+    //return render('home');
+});
+
