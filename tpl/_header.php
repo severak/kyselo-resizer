@@ -15,7 +15,7 @@
                 Kyselo resizer <i class="fa fa-camera-retro" aria-hidden="true"></i>
             </p>
             <p class="subtitle">
-                makes your multimedia smaller.
+                makes your multimedia smaller with server magic...
             </p>
         </div>
     </div>
