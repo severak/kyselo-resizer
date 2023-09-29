@@ -54,8 +54,6 @@ route('', '/', function (){
     return render('home');
 });
 
-// TODO - chunked uploader with https://github.com/simple-uploader/Uploader
-
 route('GET', '/upload/', function (){
     return render('home');
 });
@@ -86,6 +84,53 @@ route('POST', '/upload/', function (){
         return redirect('/upload');
     }
     return '';
+});
+
+route('POST', '/upload-chunked', function (){
+    $chunkNumber = $_POST['chunkNumber'];
+    $totalChunks = $_POST['totalChunks'];
+    $identifier = $_POST['identifier'];
+    $filename = $_POST['filename'];
+
+    if ($chunkNumber == $totalChunks && $totalChunks == 1) {
+        // easy way - just one big chunk
+        $ext = strtolower(pathinfo( $filename, PATHINFO_EXTENSION));
+        $sha1 = sha1_file($_FILES['file']['tmp_name']);
+        $newFile = '/files/' . $sha1 . '.' . $ext;
+        if (move_uploaded_file($_FILES['file']['tmp_name'], __DIR__ . $newFile)) {
+            /** @var rows $rows */
+            $rows = di('rows');
+            $exists = $rows->one('files', ['hash'=>$sha1]);
+            if ($exists) {
+                return redirect('/upload/' . $sha1);
+            }
+            $rows->insert('files', ['hash'=>$sha1, 'ext'=>$ext, 'status'=>'uploaded', 'timestamp'=>time()]);
+            return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
+        }
+    } else {
+        // hard way - multiple chunks we need to assemble
+        if (move_uploaded_file($_FILES['file']['tmp_name'], __DIR__ . '/tmp/' . $identifier . '.chunk' . $chunkNumber)) {
+            if ($chunkNumber == $totalChunks) {
+                for ($i = 1; $i <= $totalChunks; $i++) {
+                    file_put_contents(__DIR__ . '/tmp/' . $identifier . '.all', file_get_contents(__DIR__ . '/tmp/' . $identifier . '.chunk' . $i), FILE_APPEND);
+                }
+                $ext = strtolower(pathinfo( $filename, PATHINFO_EXTENSION));
+                $sha1 = sha1_file(__DIR__ . '/tmp/' . $identifier . '.all');
+                rename(__DIR__ . '/tmp/' . $identifier . '.all', __DIR__ . '/files/' . $sha1 . '.' . $ext);
+                /** @var rows $rows */
+                $rows = di('rows');
+                $exists = $rows->one('files', ['hash'=>$sha1]);
+                if ($exists) {
+                    return redirect('/upload/' . $sha1);
+                }
+                $rows->insert('files', ['hash'=>$sha1, 'ext'=>$ext, 'status'=>'uploaded', 'timestamp'=>time()]);
+                return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
+            } else {
+                return jsonResponse(['status'=>'ok, send more']);
+            }
+        }
+    }
+    return jsonResponse(['status'=>'something wrong'], 500);
 });
 
 route('GET', '/upload/{hash}', function ($req, $params){
