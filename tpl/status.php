@@ -47,6 +47,8 @@
     <p><a href="<?=$kyseloShareUrl;?>" class="button is-primary is-large">Share on Kyselo!</a> </p>
     <p><br></p>
     <p><input value="<?=$absoluteUrl; ?>" class="input"></p>
+    <p><br></p>
+    <p>This is only temporary file which will disappear at <?=date_create('@'.$file['timestamp'])->modify('+20 minutes')->format('H:i'); ?>.</p>
 
 
     <style>
