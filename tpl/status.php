@@ -35,9 +35,9 @@
     // TODO - support videos and sounds
     ?>
     <?php if ($file['ext']=='mp4') { ?>
-        <p><video src="<?=$absoluteUrl; ?>" controls muted autoplay loop class="kyselo-image"></video></p>
+        <p><video src="<?=$absoluteUrl; ?>" controls muted autoplay playsinline loop class="kyselo-image"></video></p>
     <?php } elseif ($file['ext']=='mp3') { ?>
-        <p><audio src="<?=$absoluteUrl; ?>"></p>
+        <p><audio src="<?=$absoluteUrl; ?>" controls></p>
     <?php } else { ?>
         <p><img src="<?=$absoluteUrl; ?>" class="image kyselo-image"></p>
     <?php } ?>
