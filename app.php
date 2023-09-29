@@ -102,7 +102,7 @@ route('POST', '/upload-chunked', function (){
             $rows = di('rows');
             $exists = $rows->one('files', ['hash'=>$sha1]);
             if ($exists) {
-                return redirect('/upload/' . $sha1);
+                return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
             }
             $rows->insert('files', ['hash'=>$sha1, 'ext'=>$ext, 'status'=>'uploaded', 'timestamp'=>time()]);
             return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
@@ -121,7 +121,7 @@ route('POST', '/upload-chunked', function (){
                 $rows = di('rows');
                 $exists = $rows->one('files', ['hash'=>$sha1]);
                 if ($exists) {
-                    return redirect('/upload/' . $sha1);
+                    return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
                 }
                 $rows->insert('files', ['hash'=>$sha1, 'ext'=>$ext, 'status'=>'uploaded', 'timestamp'=>time()]);
                 return jsonResponse(['status'=>'done', 'hash'=>$sha1]);
