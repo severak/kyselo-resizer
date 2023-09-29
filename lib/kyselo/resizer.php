@@ -16,11 +16,6 @@ class resizer
             case 'png':
                 $ok = exec('pngquant --skip-if-larger --quality=65-80 --ext .png --force ' . escapeshellarg($path));
                 break;
-            case 'mp4';
-                $fakePath = str_replace('.mp4', '.avi', $path);
-                rename($path, $fakePath);
-                $path = $fakePath;
-                $ext = 'avi';
             case '3gp':
             case 'gif':
             case 'm2ts':
@@ -37,6 +32,23 @@ class resizer
                 }
                 break;
             case 'wav':
+            case 'flac':
+            case 'opus':
+                $newPath = str_replace('.' . $ext, '.mp3', $path);
+                // from https://stackoverflow.com/questions/3255674/convert-audio-files-to-mp3-using-ffmpeg
+                $ok = exec('ffmpeg -i '.escapeshellarg($path).' -vn -ar 44100 -ac 2 -b:a 192k '.escapeshellarg($newPath));
+                $this->ext = 'mp3';
+                unlink($path);
+                if (!file_exists($newPath)) {
+                    return false;
+                }
+                break;
+            case 'mp4':
+            case 'mp3':
+                // nothing to do here, these are already compressed
+                $ok = true;
+                $this->ext = $ext;
+                break;
             default:
                 $this->ext = false;
                 return false;
