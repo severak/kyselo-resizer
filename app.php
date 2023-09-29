@@ -113,6 +113,7 @@ route('POST', '/upload-chunked', function (){
             if ($chunkNumber == $totalChunks) {
                 for ($i = 1; $i <= $totalChunks; $i++) {
                     file_put_contents(__DIR__ . '/tmp/' . $identifier . '.all', file_get_contents(__DIR__ . '/tmp/' . $identifier . '.chunk' . $i), FILE_APPEND);
+                    unlink(__DIR__ . '/tmp/' . $identifier . '.chunk' . $i);
                 }
                 $ext = strtolower(pathinfo( $filename, PATHINFO_EXTENSION));
                 $sha1 = sha1_file(__DIR__ . '/tmp/' . $identifier . '.all');
