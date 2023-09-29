@@ -8,6 +8,14 @@
     </article>
 <?php } ?>
 
+<?php if ($file['status']=='error') { ?>
+    <article class="message is-danger">
+        <div class="message-body">
+            File conversion went wrong...
+        </div>
+    </article>
+<?php } ?>
+
 <?php if ($file['status']=='uploaded') { ?>
     <p class="is-size-3"><i class="fa fa-spinner fa-pulse fa-fw"></i> file uploaded, now it's resizing...</p>
     <script>
@@ -26,7 +34,13 @@
 
     // TODO - support videos and sounds
     ?>
-    <p><img src="<?=$absoluteUrl; ?>" class="image kyselo-image"></p>
+    <?php if ($file['ext']=='mp4') { ?>
+        <p><video src="<?=$absoluteUrl; ?>" controls muted autoplay loop class="kyselo-image"></video></p>
+    <?php } elseif ($file['ext']=='mp3') { ?>
+        <p><audio src="<?=$absoluteUrl; ?>"></p>
+    <?php } else { ?>
+        <p><img src="<?=$absoluteUrl; ?>" class="image kyselo-image"></p>
+    <?php } ?>
     <p><br></p>
     <p><?= $fsize; ?></p>
     <p><br></p>

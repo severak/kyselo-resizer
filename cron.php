@@ -19,8 +19,11 @@ if ($toResize) {
     echo 'resizing ' . $toResize['hash'] . '...' . PHP_EOL;
     $rows->update('files', ['hash'=>$toResize['hash'], 'is_running'=>1], ['hash'=>$toResize['hash']]);
     $resizer = new kyselo\resizer();
-    $resizer->resize(__DIR__ . '/files/' . $toResize['hash'] . '.' . $toResize['ext']);
-    $rows->update('files', ['hash'=>$toResize['hash'], 'is_running'=>0, 'status'=>'resized', 'ext'=>$resizer->ext], ['hash'=>$toResize['hash']]);
+    if ($resizer->resize(__DIR__ . '/files/' . $toResize['hash'] . '.' . $toResize['ext'])) {
+        $rows->update('files', ['hash'=>$toResize['hash'], 'is_running'=>0, 'status'=>'resized', 'ext'=>$resizer->ext], ['hash'=>$toResize['hash']]);
+    } else {
+        $rows->update('files', ['hash'=>$toResize['hash'], 'is_running'=>0, 'status'=>'error', 'ext'=>$resizer->ext], ['hash'=>$toResize['hash']]);
+    }
     echo 'OK ' . $toResize['hash'] . PHP_EOL;
     exit;
 }

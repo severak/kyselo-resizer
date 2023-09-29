@@ -6,7 +6,7 @@
         <div class="field">
             <div class="file has-name is-fullwidth">
                 <label class="file-label">
-                    <input class="file-input" type="file" name="upload" multiple="false">
+                    <input class="file-input" type="file" name="upload">
                     <span class="file-cta">
       <span class="file-icon">
         <i class="fas fa-upload"></i>
