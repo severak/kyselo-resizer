@@ -1,9 +1,9 @@
 <?php
 // see app.php for application logic
 
-if (!file_exists('config.php')) die('APP not configured');
+if (!file_exists(__DIR__ .'/config.php')) die('APP not configured');
 
-$config = require 'config.php';
+$config = require(__DIR__ . '/config.php');
 
 // AUTOLOADING
 
